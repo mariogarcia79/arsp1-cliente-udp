@@ -41,7 +41,7 @@ int main (
     // Implementar enum service para soportar multiples servicios
     char *proto = "udp";
     char *service;
-    struct in_addr addr;
+    struct sockaddr_in addr;
     struct servent *qotd_servent;
     int sockfd;
     // Mirar si hay que hacer reserva dinamica o el mensaje tiene un limite.
@@ -71,14 +71,16 @@ int main (
         service = "qotd";
     }
 
-    if (inet_aton(argv[1], &addr) == 0) {
-        fprintf(stderr, "Dirección IP invalida: %s\n", argv[1]);
+    //TODO: Crear constante UDP en lugar del literal, permitir TCP a futuro.
+    if ((qotd_servent = getservbyname("qotd", "tcp")) == NULL) {
+        fprintf(stderr, "No se pudo obtener el puerto para el servicio qotd\n");
         exit(1);
     }
 
-    //TODO: Crear constante UDP en lugar del literal, permitir TCP a futuro.
-    if ((qotd_servent = getservbyname("qotd", "udp")) == NULL) {
-        fprintf(stderr, "No se pudo obtener el puerto para el servicio qotd\n");
+    addr.sin_family = AF_INET;
+    addr.sin_port = qotd_servent->s_port;
+    if (inet_aton(argv[1], &addr.sin_addr) == 0) {
+        fprintf(stderr, "Dirección IP invalida: %s\n", argv[1]);
         exit(1);
     }
 
@@ -94,15 +96,16 @@ int main (
     }
 
     //TODO: Obtener IP y puerto desde getaddrinfo() en lugar de armar la estructura a mano.
-    if (bind(sockfd, (struct sockaddr *) &myaddr, sizeof(myaddr)) == -1) {
+    if (bind(sockfd, (struct sockaddr *) &myaddr, (socklen_t) sizeof(myaddr)) == -1) {
         fprintf(stderr, "Error al enlazar el socket");
         close(sockfd);
         exit(1);
     }
 
     //TODO: Hacer una constante con el mensaje a enviar (el servidor ignora el cuerpo del mensaje)
-    if (sendto(sockfd, "Enviame el mensaje del dia", 26, 0, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
+    if (sendto(sockfd, "Enviame el mensaje del dia", 27, 0, (struct sockaddr *)&addr, (socklen_t)sizeof(addr)) == -1) {
         fprintf(stderr, "Error al enviar el mensaje");
+        printf("Errno: %d\n", errno);
         close(sockfd);
         exit(1);
     }
