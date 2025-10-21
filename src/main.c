@@ -105,7 +105,7 @@ int main (
     }
 
     //TODO: Hacer una constante con el mensaje a enviar (el servidor ignora el cuerpo del mensaje)
-    if (sendto(sockfd, "Enviame el mensaje del dia", 26, 0, (struct sockaddr *)&addr, (socklen_t)sizeof(addr)) == -1) {
+    if (sendto(sockfd, "Enviame el mensaje del dia\0", 27, 0, (struct sockaddr *)&addr, (socklen_t)sizeof(addr)) == -1) {
         fprintf(stderr, "Error al enviar el mensaje");
         printf("Errno: %d\n", errno);
         close(sockfd);
