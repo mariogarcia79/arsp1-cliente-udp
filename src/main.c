@@ -112,7 +112,7 @@ int main (
         exit(1);
     }
 
-    if (recvfrom(sockfd, msg, 0, 0, NULL, NULL) == -1) {
+    if (recvfrom(sockfd, msg, sizeof(msg), 0, NULL, NULL) == -1) {
         fprintf(stderr, "Error al recibir el mensaje");
         close(sockfd);
         exit(1);
