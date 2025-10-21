@@ -21,6 +21,8 @@
     * - Validate all user inputs
     * - Handle edge cases
     * - Refactor for readability
+    * - Add \n at the end of error prints
+    * - Use getaddrinfo() instead of manual sockaddr_in setup ***
 */
 
 #include <stdio.h>
