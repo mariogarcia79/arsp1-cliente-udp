@@ -1,7 +1,7 @@
 #ifndef ARGPARSE_H
 #define ARGPARSE_H
 
-#define STRING_USAGE "Uso: %s <direccion IP> [-s servicio]\n"
+#define STRING_USAGE "Usage: %s <IP address> [-s service]\n"
 
 struct arguments {
     char *program_name;
