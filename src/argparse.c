@@ -61,6 +61,7 @@ exit_error_einval:
     return -1;
 }
 
+
 int
 get_flag(char *arg)
 {
