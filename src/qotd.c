@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
-#include <arpa/inet.h>
 #include <unistd.h>
+
+#include <arpa/inet.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <errno.h>
+//#include <netinet/in.h> //double import from <arpa/inet.h>
 #include <netdb.h>
 
 #include "argparse.h"
 #include "config.h"
 #include "qotd.h"
+
 
 int
 qotd_setup_socket(
@@ -22,7 +22,9 @@ qotd_setup_socket(
     struct servent *qotd_servent;
     int sockfd;
 
-    //TODO: Crear constante UDP en lugar del literal, permitir TCP a futuro.
+    /* Use tcp because some linux distributions only offer qotd over tcp 
+     * listed in /etc/services, udp port does not appear
+     */
     if ((qotd_servent = getservbyname(args->service, "tcp")) == NULL) {
         fprintf(stderr, "Could not resolve QOTD's port number\n");
         exit(1);
@@ -35,18 +37,15 @@ qotd_setup_socket(
         exit(1);
     }
 
-    //TODO: Mirar a ver si se puede hacer de otra forma
     myaddr->sin_family = AF_INET;
     myaddr->sin_port = qotd_servent->s_port;
     myaddr->sin_addr.s_addr = INADDR_ANY;
 
-    //TODO: Meterlo dentro de un switch para permitir escalabilidad a TCP a futuro.
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
         perror("socket");
         exit(1);
     }
 
-    //TODO: Obtener IP y puerto desde getaddrinfo() en lugar de armar la estructura a mano.
     if (bind(sockfd, (struct sockaddr *) myaddr, (socklen_t) sizeof(*myaddr)) == -1) {
         perror("bind");
         close(sockfd);

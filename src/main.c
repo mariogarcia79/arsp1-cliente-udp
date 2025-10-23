@@ -1,27 +1,16 @@
 /*
-    * main.c
-    *
-    *  Created on: 12 may. 2024
-    *
     * GENERAL TODO LIST:
     * - Add comments and documentation
-    * - Clean imports
-    * - Makefile
 */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <arpa/inet.h>
 #include <unistd.h>
-#include <sys/socket.h>
+#include <string.h>
+
 #include <netinet/in.h>
-#include <errno.h>
-#include <netdb.h>
 
 #include "argparse.h"
-#include "config.h"
 #include "qotd.h"
 
 typedef enum {
