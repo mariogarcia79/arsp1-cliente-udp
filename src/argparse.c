@@ -38,6 +38,7 @@ run_checks(int argc, char *argv[], struct arguments *args)
                 args->service = argv[4];
                 break;
             }
+            // fallthrough
         default:
             errno = EINVAL;
             return -1;
@@ -56,8 +57,4 @@ int
 get_flag(char *arg)
 {
     !strcmp(arg, "-s") ? 0 : -1;
-    if (!strcmp(arg, "-s"))
-        return 0;
-    else
-        return -1;
 }
