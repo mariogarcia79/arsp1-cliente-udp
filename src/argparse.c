@@ -56,5 +56,5 @@ run_checks(int argc, char *argv[], struct arguments *args)
 int
 get_flag(char *arg)
 {
-    !strcmp(arg, "-s") ? 0 : -1;
+    return !strcmp(arg, "-s") ? 0 : -1;
 }
