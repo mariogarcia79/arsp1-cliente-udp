@@ -35,7 +35,7 @@ run_checks(int argc, char *argv[], struct arguments *args)
             // Check for -s flag and validate service length
             if (!get_flag(argv[2]) &&
             strlen(argv[3]) < MAX_SERVICE_LENGTH) {
-                print("hasta aqui bien\n");
+                printf("hasta aqui bien\n");
                 args->service = argv[4];
                 break;
             }
