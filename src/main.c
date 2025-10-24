@@ -36,7 +36,8 @@ main (int argc, char *argv[])
             sockfd = qotd_setup_socket(&args, &myaddr, &addr);
             qotd_get_quote(sockfd, &addr, &received_msg);
             printf("Mensaje del dia: %s\n", received_msg);
-            if (received_msg) free(received_msg);
+            if (received_msg)
+                free(received_msg);
             close(sockfd);
             break;
         default:
