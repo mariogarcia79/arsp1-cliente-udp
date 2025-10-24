@@ -22,7 +22,7 @@ qotd_setup_socket(
     struct servent *qotd_servent;
     int sockfd;
 
-    // PROBAR
+    // TEST
     if ((qotd_servent = getservbyname(args->service, "udp")) == NULL) {
         fprintf(stderr, "Could not resolve QOTD's port number\n");
         exit(1);
