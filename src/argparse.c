@@ -34,10 +34,11 @@ run_checks
         case 2:
             args->service = SERVICE_DEFAULT;
             break;
-        case 5:
-            if (!get_flag(argv[3])) {
+        case 4:
+            // Check for -s flag
+            if (!get_flag(argv[2])) {
                 // Validate service name length
-                if (strlen(argv[4]) > MAX_SERVICE_LENGTH)
+                if (strlen(argv[3]) > MAX_SERVICE_LENGTH)
                     goto exit_error_einval;
                 else 
                     args->service = argv[4];
@@ -60,7 +61,6 @@ exit_error_einval:
     errno = EINVAL;
     return -1;
 }
-
 
 int
 get_flag(char *arg)
