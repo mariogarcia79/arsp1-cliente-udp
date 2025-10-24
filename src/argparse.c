@@ -6,14 +6,15 @@
 #include "argparse.h"
 #include "config.h"
 
-
+/* parse_args
+ * Parses command line arguments and fills the arguments struct.
+ * Returns 0 on success, -1 on failure setting errno.
+ */
 int
 parse_args(int argc, char *argv[], struct arguments *args)
 {
     if (run_checks(argc, argv, args) == -1) {
-        perror("argparser");
-        fprintf(stderr, STRING_USAGE, argv[0]);
-        exit(1);
+        return -1;
     }
 
     args->program_name = argv[0];

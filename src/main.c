@@ -18,17 +18,29 @@ ServiceType get_service_type(const char *name) {
     return SERVICE_UNKNOWN;
 }
 
+void
+print_usage(const char *program_name)
+{
+    fprintf(stderr, STRING_USAGE, program_name);
+}
+
 int
 main (int argc, char *argv[])
 {
     struct sockaddr_in myaddr = {0};
     struct sockaddr_in addr   = {0};
     struct arguments   args   = {0};
-    int sockfd;
     char *received_msg = NULL;
     ServiceType service;
-
-    parse_args(argc, argv, &args);
+    int sockfd;
+    int err;
+    
+    err = parse_args(argc, argv, &args);
+    if (err == -1) {
+        perror("parse_args");
+        print_usage(argv[0]);
+        exit(1);
+    }
     service = get_service_type(args.service);
     
     switch(service) {
@@ -42,6 +54,7 @@ main (int argc, char *argv[])
             break;
         default:
             fprintf(stderr, "Service not found\n");
+            exit(1);
     }
     
     return 0;
