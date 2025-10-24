@@ -22,10 +22,8 @@ qotd_setup_socket(
     struct servent *qotd_servent;
     int sockfd;
 
-    /* Use tcp because some linux distributions only offer qotd over tcp 
-     * listed in /etc/services, udp port does not appear
-     */
-    if ((qotd_servent = getservbyname(args->service, "tcp")) == NULL) {
+    // PROBAR
+    if ((qotd_servent = getservbyname(args->service, "udp")) == NULL) {
         fprintf(stderr, "Could not resolve QOTD's port number\n");
         exit(1);
     }
