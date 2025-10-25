@@ -13,15 +13,11 @@ typedef enum {
     SERVICE_QOTD
 } ServiceType;
 
-ServiceType get_service_type(const char *name) {
+ServiceType
+get_service_type(const char *name)
+{
     if (strcmp(name, "qotd") == 0) return SERVICE_QOTD;
     return SERVICE_UNKNOWN;
-}
-
-void
-print_usage(const char *program_name)
-{
-    fprintf(stderr, STRING_USAGE, program_name);
 }
 
 int

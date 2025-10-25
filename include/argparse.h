@@ -9,14 +9,13 @@ struct arguments {
     char *service;
 };
 
-int get_flag(char *arg);
 
-int run_checks
+void print_usage
 (
-    int argc,
-    char *argv[],
-    struct arguments *args
+    const char *program_name
 );
+
+void print_help(void);
 
 int parse_args
 (

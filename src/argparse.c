@@ -6,6 +6,33 @@
 #include "argparse.h"
 #include "config.h"
 
+void print_help(void);
+void init_defaults(char *prog_name, struct arguments *args);
+
+typedef enum {
+    FLAG_UNKNOWN = -1,
+    FLAG_HELP    = 0,
+    FLAG_SERVICE = 1
+} FlagType;
+
+FlagType
+get_flag(const char *arg)
+{
+    if (!strcmp(arg, "-h"))        return FLAG_HELP;
+    if (!strcmp(arg, "--help"))    return FLAG_HELP;
+    if (!strcmp(arg, "-s"))        return FLAG_SERVICE;
+    if (!strcmp(arg, "--service")) return FLAG_SERVICE;
+    return FLAG_UNKNOWN;
+}
+
+void
+init_defaults(char *prog_name, struct arguments *args)
+{
+    args->program_name = prog_name;
+    args->service = SERVICE_DEFAULT;
+    args->ip_address = NULL;
+}
+
 /* 
  * parse_args()
  * Parses command line arguments and fills the arguments struct.
@@ -14,57 +41,63 @@
 int
 parse_args(int argc, char *argv[], struct arguments *args)
 {
-    if (run_checks(argc, argv, args) == -1) {
-        return -1;
-    }
+    int count = 1;
+    
+    init_defaults(argv[0], args);
 
-    args->program_name = argv[0];
-    args->ip_address   = argv[1];
-
-    return 0;
-}
-
-/*
- * run_checks()
- * Checks both argument count and different argument formats.
- * Returns 0 on success, -1 on failure setting errno.
- */
-int
-run_checks(int argc, char *argv[], struct arguments *args)
-{
-    // Validate argument count
-    switch (argc) {
-        case 2:
-            args->service = SERVICE_DEFAULT;
-            break;
-        case 4:
-            // Check for -s flag and validate service length
-            if (!get_flag(argv[2]) &&
-            strlen(argv[3]) < MAX_SERVICE_LENGTH) {
-                args->service = argv[4];
-                break;
+    // Precondition
+    if (argc < 2)
+        goto exit_error_invalid;
+    
+    while (count < argc) {
+        if (argv[count][0] == '-') {
+            // It's a flag, handle accordingly
+            switch (get_flag(argv[count])) {
+                case FLAG_HELP:
+                    print_usage(args->program_name);
+                    print_help();
+                    goto exit_success;
+                case FLAG_SERVICE:
+                    count++;
+                    if (count >= argc)
+                        goto exit_error_invalid;
+                    else
+                        args->service = argv[count];
+                    break;
+                default:
+                    goto exit_error_invalid;
             }
-            // fallthrough
-        default:
-            errno = EINVAL;
-            return -1;
+        } else {
+            // It's not a flag, it must be the IP address (set only once)
+            if (!args->ip_address)
+                args->ip_address = argv[count];
+            else
+                goto exit_error_invalid;            
+        }
+        count++;
     }
 
-    // Validate IP address length
-    if (strlen(argv[1]) > MAX_IPV4_LENGTH) {
-        errno = EINVAL;
-        return -1;
+    if (args->ip_address == NULL) {
+        goto exit_error_invalid;
     }
 
+exit_success:
     return 0;
+exit_error_invalid:
+    errno = EINVAL;
+    return -1;
 }
 
-/*
- * get_flag()
- * Returns 0 if a valid flag was detected.
- */
-int
-get_flag(char *arg)
+void
+print_usage(const char *program_name)
 {
-    return !strcmp(arg, "-s") ? 0 : -1;
+    fprintf(stdout, STRING_USAGE, program_name);
+}
+
+void
+print_help(void)
+{
+    fprintf(stdout, "Options:\n");
+    fprintf(stdout, "  -h, --help               Show this help message and exit\n");
+    fprintf(stdout, "  -s, --service <service>  Specify the service to use (default: %s)\n", SERVICE_DEFAULT);
 }
