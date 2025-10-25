@@ -24,3 +24,5 @@ This client requires the IP of the QOTD server in dot notation: `XXX.XXX.XXX.XXX
 ```bash
 # qotd-udp-client-g201 XXX.XXX.XXX.XXX --service service
 ```
+
+> **Note:** The client should be run as superuser, to be able to open a socket against the machine.
