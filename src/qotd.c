@@ -5,7 +5,7 @@
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
-//#include <netinet/in.h> //double import from <arpa/inet.h>
+//#include <netinet/in.h> //double import from <arpa/inet.h>, not needed
 #include <netdb.h>
 
 #include "argparse.h"
@@ -22,31 +22,46 @@ qotd_setup_socket(
     struct servent *qotd_servent;
     int sockfd;
 
-    // TEST
+    /*
+     * Fill servent structure to get QOTD port number.
+     * The port number is obtained from /etc/services file using getservbyname()
+     */
     if ((qotd_servent = getservbyname(args->service, "udp")) == NULL) {
         fprintf(stderr, "Could not resolve QOTD's port number\n");
-        exit(1);
+        return -1;
     }
 
+    /*
+     * Fill sockaddr_in structure with the server address.
+     * The IP address is obtained from command line arguments and formatted
+     * using inet_aton().
+     */
     addr->sin_family = AF_INET;
     addr->sin_port = qotd_servent->s_port;
     if (inet_aton(args->ip_address, &addr->sin_addr) == 0) {
         fprintf(stderr, "Invalid IP address: %s \n", args->ip_address);
-        exit(1);
+        return -1;
     }
 
+    /*
+     * Fill sockaddr_in structure with the client address (used for binding).
+     * INADDR_ANY is used to bind to all interfaces.
+     */
     myaddr->sin_family = AF_INET;
     myaddr->sin_port = qotd_servent->s_port;
     myaddr->sin_addr.s_addr = INADDR_ANY;
 
+    // Open UDP socket with SOCK_DGRAM flag
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
         perror("socket");
-        exit(1);
+        return -1;
     }
 
+    // Bind the client address to the socket
     if (bind(sockfd, (struct sockaddr *) myaddr, (socklen_t) sizeof(*myaddr)) == -1) {
         perror("bind");
         close(sockfd);
+        return -1;
     }
 
     return sockfd;
@@ -71,11 +86,14 @@ qotd_get_quote
         goto exit_error_socket;
     }
 
-    /* Peek the message to find out the actual size of it.
-     * From the manual pages, MSG_TRUNC flag makes recvfrom return the real size
-     * without removing the datagram from the queue. This is useful because
-     * recvfrom() doesn't do reallocs, so you would need to allocate initially
-     * a buffer of 64KB to account for the maximum size of an UDP packet
+    /* 
+     * Peek the message to find out the actual size of it.
+     * From the manual pages, MSG_PEEK reads the datagram without removing it
+     * from the message queue. MSG_TRUNC flag makes recvfrom return the real size
+     * of that datagram.
+     * This is useful because recvfrom() doesn't do reallocs, so you would need 
+     * to allocate initially a buffer of 64KB to account for the maximum size of 
+     * an UDP packet. This is quite wasteful in terms of memory usage.
      */
     msg_size = recvfrom(sockfd, NULL, 0, MSG_PEEK | MSG_TRUNC, NULL, NULL);
     if (msg_size == -1) {
@@ -83,14 +101,18 @@ qotd_get_quote
         goto exit_error_socket;
     }
 
-    // Allocate memory for the message buffer
+    // Allocate memory for the message buffer using the previously obtained size
     *received_msg = (char *)malloc(msg_size);
     if (!received_msg) {
         perror("malloc");
         goto exit_error_socket;
     }
 
-    // Actually fetch the packet from the queue onto the allocated buffer.
+    /*
+     * Actually fetch the packet from the queue onto the allocated buffer.
+     * We don't need to use the address of the sender, so we pass NULL as those
+     * arguments.
+     */
     msg_size = recvfrom(sockfd, *received_msg, msg_size, 0, NULL, NULL);
     if (err == -1) {
         perror("recvfrom");
@@ -99,9 +121,10 @@ qotd_get_quote
 
     return 0;
 
+// clean exit
 exit_error_socket:
     if (received_msg)
         free(received_msg);
     close(sockfd);
-    exit(1);
+    return -1;
 }

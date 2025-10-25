@@ -42,7 +42,9 @@ main (int argc, char *argv[])
     switch(service) {
         case SERVICE_QOTD:
             sockfd = qotd_setup_socket(&args, &myaddr, &addr);
-            qotd_get_quote(sockfd, &addr, &received_msg);
+            if (sockfd == -1) exit(1);
+            err = qotd_get_quote(sockfd, &addr, &received_msg);
+            if (err == -1) exit(1);
             printf("Mensaje del dia: %s\n", received_msg);
             if (received_msg)
                 free(received_msg);
