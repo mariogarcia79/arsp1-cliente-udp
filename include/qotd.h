@@ -4,7 +4,7 @@
 #define STRING_QOTD_MSG "Enviame el mensaje del dia"
 // Sizeof is resolved at compile time, effectively serving as strlen-like macro
 #define STRING_QOTD_MSG_LEN \
-    ( (sizeof(STRING_QOTD_MSG)/sizeof(STRING_QOTD_MSG[0])) - sizeof(s[0]) )
+    ( (sizeof(STRING_QOTD_MSG)/sizeof(STRING_QOTD_MSG[0])) - sizeof(STRING_QOTD_MSG[0]) )
 
 
 int qotd_setup_socket

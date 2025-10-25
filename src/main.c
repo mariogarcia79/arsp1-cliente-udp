@@ -50,6 +50,7 @@ main (int argc, char *argv[])
                 free(received_msg);
             close(sockfd);
             break;
+	case SERVICE_UNKNOWN:
         default:
             fprintf(stderr, "Service not found\n");
             exit(1);
