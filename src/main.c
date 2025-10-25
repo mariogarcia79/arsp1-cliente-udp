@@ -45,7 +45,7 @@ main (int argc, char *argv[])
             if (sockfd == -1) exit(1);
             err = qotd_get_quote(sockfd, &addr, &received_msg);
             if (err == -1) exit(1);
-            printf("Mensaje del dia: %s\n", received_msg);
+            printf("%s\n", received_msg);
             if (received_msg)
                 free(received_msg);
             close(sockfd);
