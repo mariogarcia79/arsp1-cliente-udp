@@ -6,7 +6,8 @@
 #include "argparse.h"
 #include "config.h"
 
-/* parse_args
+/* 
+ * parse_args()
  * Parses command line arguments and fills the arguments struct.
  * Returns 0 on success, -1 on failure setting errno.
  */
@@ -23,6 +24,11 @@ parse_args(int argc, char *argv[], struct arguments *args)
     return 0;
 }
 
+/*
+ * run_checks()
+ * Checks both argument count and different argument formats.
+ * Returns 0 on success, -1 on failure setting errno.
+ */
 int
 run_checks(int argc, char *argv[], struct arguments *args)
 {
@@ -35,7 +41,6 @@ run_checks(int argc, char *argv[], struct arguments *args)
             // Check for -s flag and validate service length
             if (!get_flag(argv[2]) &&
             strlen(argv[3]) < MAX_SERVICE_LENGTH) {
-                printf("hasta aqui bien\n");
                 args->service = argv[4];
                 break;
             }
@@ -54,6 +59,10 @@ run_checks(int argc, char *argv[], struct arguments *args)
     return 0;
 }
 
+/*
+ * get_flag()
+ * Returns 0 if a valid flag was detected.
+ */
 int
 get_flag(char *arg)
 {
