@@ -6,7 +6,7 @@ SRC_DIR := src
 OBJ_DIR := obj
 BIN_DIR := bin
 
-TARGET  := $(BIN_DIR)/qotd-udp-server-XX
+TARGET  := $(BIN_DIR)/qotd-udp-client-g201
 
 SRC := $(wildcard $(SRC_DIR)/**/*.c $(SRC_DIR)/*.c)
 OBJ := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC))
