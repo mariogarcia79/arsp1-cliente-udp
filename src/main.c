@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 
 #include "argparse.h"
+#include "config.h"
 #include "qotd.h"
 
 typedef enum {
@@ -40,6 +41,7 @@ main (int argc, char *argv[])
     service = get_service_type(args.service);
     
     switch(service) {
+
         case SERVICE_QOTD:
             sockfd = qotd_setup_socket(&args, &myaddr, &addr);
             if (sockfd == -1) exit(1);
@@ -48,9 +50,18 @@ main (int argc, char *argv[])
             printf("%s\n", received_msg);
             if (received_msg)
                 free(received_msg);
+            
+            #ifdef PROTO_TCP
+            if (shutdown(sockfd, SHUT_RDWR) == -1) {
+                perror("shutdown");
+                close(sockfd);
+                exit(1);
+            }
+            #endif
             close(sockfd);
             break;
-	case SERVICE_UNKNOWN:
+
+	    case SERVICE_UNKNOWN:
         default:
             fprintf(stderr, "Service not found\n");
             exit(1);
