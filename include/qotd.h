@@ -1,7 +1,7 @@
 #ifndef QOTD_H
 #define QOTD_H
 
-#define STRING_QOTD_MSG "Enviame el mensaje del dia"
+#define STRING_QOTD_MSG "Send me the message of the day."
 // Sizeof is resolved at compile time, effectively serving as strlen-like macro
 #define STRING_QOTD_MSG_LEN \
     ( (sizeof(STRING_QOTD_MSG)/sizeof(STRING_QOTD_MSG[0])) - sizeof(STRING_QOTD_MSG[0]) )
