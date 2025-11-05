@@ -53,7 +53,7 @@ void
 init_defaults(char *prog_name, struct arguments *args)
 {
     args->program_name = prog_name;
-    args->service = SERVICE_DEFAULT;
+    args->service = "qotd";
     args->ip_address = NULL;
 }
 
@@ -227,6 +227,12 @@ qotd_get_quote
         perror("recv");
         goto exit_error_socket;
     }
+
+    if (shutdown(sockfd, SHUT_RDWR) == -1) {
+        perror("shutdown");
+        close(sockfd);
+        exit(1);
+    }
     
     return 0;
 
@@ -271,12 +277,6 @@ main (int argc, char *argv[])
     
     printf("%s\n", received_msg);
     free(received_msg);
-    
-    if (shutdown(sockfd, SHUT_RDWR) == -1) {
-        perror("shutdown");
-        close(sockfd);
-        exit(1);
-    }
 
     close(sockfd);
     return 0;
