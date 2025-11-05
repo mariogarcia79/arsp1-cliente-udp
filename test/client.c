@@ -79,19 +79,19 @@ parse_args(int argc, char *argv[], struct arguments *args)
         if (argv[count][0] == '-') {
             // It's a flag, handle accordingly
             switch (get_flag(argv[count])) {
-                case FLAG_HELP:
-                    print_usage(args->program_name);
-                    print_help();
-                    goto exit_success;
-                case FLAG_SERVICE:
-                    count++;
-                    if (count >= argc)
-                        goto exit_error_invalid;
-                    else
-                        args->service = argv[count];
-                    break;
-                default:
+            case FLAG_HELP:
+                print_usage(args->program_name);
+                print_help();
+                goto exit_success;
+            case FLAG_SERVICE:
+                count++;
+                if (count >= argc)
                     goto exit_error_invalid;
+                else
+                    args->service = argv[count];
+                break;
+            default:
+                goto exit_error_invalid;
             }
         } else {
             // It's not a flag, it must be the IP address (set only once)
@@ -192,7 +192,12 @@ qotd_get_quote
     }
 
     /*
-     * Actually fetch the packet from the queue onto the allocated buffer.
+     * Actually fetch the packet from the queue onto the fixed-length buffer.
+     * As TCP is connection-oriented, we don't use MSG_TRUNC as we did with UDP
+     * because we actually can receive bytes continously, and we don't have the
+     * concept of datagram. Therefore, it doesn't make sense to get the actual
+     * size we are receiving, so we assume a maximum packet size of 512 bytes.
+     * This size is stated in MAX_BUFFER_SIZE.
      * We don't need to use the address of the sender, so we pass NULL as those
      * arguments.
      */
