@@ -30,7 +30,7 @@ print_help(void)
 {
     fprintf(stdout, "Options:\n");
     fprintf(stdout, "  -h, --help               Show this help message and exit\n");
-    fprintf(stdout, "  -s, --service <service>  Specify the service to use (default: %s)\n", SERVICE_DEFAULT);
+    fprintf(stdout, "  -s, --service <service>  Specify the service to use (default: qotd)\n");
 }
 
 typedef enum {
@@ -258,7 +258,7 @@ main (int argc, char *argv[])
         exit(1);
     }
 
-    if (args.service != "qotd") {
+    if (!strcmp(args.service, "qotd")) {
         fprintf(stderr, "Service not found\n");
         exit(1);
     }
