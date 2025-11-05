@@ -258,7 +258,7 @@ main (int argc, char *argv[])
         exit(1);
     }
 
-    if (!strcmp(args.service, "qotd")) {
+    if (strcmp(args.service, "qotd")) {
         fprintf(stderr, "Service not found\n");
         exit(1);
     }
