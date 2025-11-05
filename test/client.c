@@ -233,7 +233,8 @@ qotd_get_quote
         close(sockfd);
         exit(1);
     }
-    
+
+    close(sockfd);    
     return 0;
 
 // clean exit
@@ -278,6 +279,5 @@ main (int argc, char *argv[])
     printf("%s\n", received_msg);
     free(received_msg);
 
-    close(sockfd);
     return 0;
 }
