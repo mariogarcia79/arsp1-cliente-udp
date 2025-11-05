@@ -211,6 +211,8 @@ qotd_get_quote
         goto exit_error_socket;
     }
     
+    printf("%d\n", msg_size);
+    
     // Allocate memory for the message buffer using the previously obtained size
     *received_msg = (char *)malloc(msg_size);
     if (*received_msg == NULL) {
@@ -257,9 +259,8 @@ main (int argc, char *argv[])
     char *received_msg = NULL;
     int sockfd;
     int err;
-    
-    err = parse_args(argc, argv, &args);
-    if (err == -1) {
+
+    if (parse_args(argc, argv, &args) == -1) {
         perror("parse_args");
         print_usage(argv[0]);
         exit(1);
