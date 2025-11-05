@@ -14,12 +14,6 @@
 #define STRING_QOTD_MSG_LEN \
     ( (sizeof(STRING_QOTD_MSG)/CHAR_SIZE) - CHAR_SIZE )
 
-struct arguments {
-    char *program_name;
-    char *ip_address;
-    char *service;
-};
-
 void
 print_usage(const char *program_name)
 {
@@ -33,6 +27,12 @@ print_help(void)
     fprintf(stdout, "  -h, --help               Show this help message and exit\n");
     fprintf(stdout, "  -s, --service <service>  Specify the service to use (default: qotd)\n");
 }
+
+struct arguments {
+    char *program_name;
+    char *ip_address;
+    char *service;
+};
 
 typedef enum {
     FLAG_UNKNOWN = -1,
