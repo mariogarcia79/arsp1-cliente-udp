@@ -179,7 +179,7 @@ qotd_get_quote
 (
     int sockfd,
     struct sockaddr_in *addr,
-    char **received_msg
+    char *received_msg
 ){
     int err;
     ssize_t msg_size;
@@ -196,7 +196,7 @@ qotd_get_quote
      * We don't need to use the address of the sender, so we pass NULL as those
      * arguments.
      */
-    msg_size = recv(sockfd, *received_msg, MAX_BUFFER_SIZE, 0);
+    msg_size = recv(sockfd, received_msg, MAX_BUFFER_SIZE, 0);
     if (msg_size == -1) {
         perror("recv");
         goto exit_error_socket;
@@ -243,11 +243,10 @@ main (int argc, char *argv[])
     sockfd = qotd_setup_socket(&args, &myaddr, &addr);
     if (sockfd == -1) exit(1);
 
-    err = qotd_get_quote(sockfd, &addr, &received_msg);
+    err = qotd_get_quote(sockfd, &addr, received_msg);
     if (err == -1) exit(1);
     
     printf("%s\n", received_msg);
-    free(received_msg);
 
     return 0;
 }
