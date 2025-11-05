@@ -189,12 +189,10 @@ qotd_get_quote
         goto exit_error_socket;
     }
 
-    /*
     if (shutdown(sockfd, SHUT_WR) == -1) {
         perror("shutdown");
         goto exit_error_socket;
     }
-    */
     
     /* 
      * Peek the message to find out the actual size of it.
@@ -229,7 +227,7 @@ qotd_get_quote
         goto exit_error_socket;
     }
 
-    if (shutdown(sockfd, SHUT_RDWR) == -1) {
+    if (shutdown(sockfd, SHUT_RD) == -1) {
         perror("shutdown");
         goto exit_error_socket;
     }
