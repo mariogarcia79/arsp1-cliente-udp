@@ -172,7 +172,7 @@ qotd_get_quote
     #endif
     #ifdef PROTO_TCP
     msg_size = recv(sockfd, *received_msg, msg_size, 0);
-    if (err == -1) {
+    if (msg_size == -1) {
         perror("recv");
         goto exit_error_socket;
     }

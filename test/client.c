@@ -223,7 +223,7 @@ qotd_get_quote
      * arguments.
      */
     msg_size = recv(sockfd, *received_msg, msg_size, 0);
-    if (err == -1) {
+    if (msg_size == -1) {
         perror("recv");
         goto exit_error_socket;
     }
