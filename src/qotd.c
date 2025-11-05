@@ -153,7 +153,7 @@ qotd_get_quote
 
     // Allocate memory for the message buffer using the previously obtained size
     *received_msg = (char *)malloc(msg_size);
-    if (!received_msg) {
+    if (*received_msg == NULL) {
         perror("malloc");
         goto exit_error_socket;
     }
