@@ -2,8 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
-#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+//#include <netinet/in.h> //double import from <arpa/inet.h>, not needed
+#include <netdb.h>
 
 #define STRING_USAGE "Usage: %s <IP address> [-s service]\n"
 #define MAX_IPV4_LENGTH 15
