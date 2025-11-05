@@ -205,14 +205,14 @@ qotd_get_quote
      * would need to allocate initially a buffer of 64KB to account for the maximum 
      * size of a TCP/UDP packet. This is quite wasteful in terms of memory usage.
      */
-    msg_size = recv(sockfd, NULL, 0, MSG_PEEK | MSG_TRUNC);
+    msg_size = recv(sockfd, NULL, 0, MSG_TRUNC);
     if (msg_size == -1) {
         perror("recvfrom peek");
         goto exit_error_socket;
     }
     
     printf("%d\n", msg_size);
-    
+
     // Allocate memory for the message buffer using the previously obtained size
     *received_msg = (char *)malloc(msg_size);
     if (*received_msg == NULL) {
