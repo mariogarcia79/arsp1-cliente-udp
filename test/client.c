@@ -9,9 +9,10 @@
 #define MAX_IPV4_LENGTH 15
 #define MAX_SERVICE_LENGTH 12
 #define STRING_QOTD_MSG "Enviame el mensaje del dia"
+#define CHAR_SIZE sizeof(STRING_QOTD_MSG[0])
 // Sizeof is resolved at compile time, effectively serving as strlen-like macro
 #define STRING_QOTD_MSG_LEN \
-    ( (sizeof(STRING_QOTD_MSG)/sizeof(STRING_QOTD_MSG[0])) - sizeof(STRING_QOTD_MSG[0]) )
+    ( (sizeof(STRING_QOTD_MSG)/CHAR_SIZE) - CHAR_SIZE )
 
 struct arguments {
     char *program_name;
@@ -57,11 +58,6 @@ init_defaults(char *prog_name, struct arguments *args)
     args->ip_address = NULL;
 }
 
-/* 
- * parse_args()
- * Parses command line arguments and fills the arguments struct.
- * Returns 0 on success, -1 on failure setting errno.
- */
 int
 parse_args(int argc, char *argv[], struct arguments *args)
 {
@@ -171,7 +167,6 @@ qotd_setup_socket(
     
     return sockfd;
 }
-
 
 int
 qotd_get_quote
