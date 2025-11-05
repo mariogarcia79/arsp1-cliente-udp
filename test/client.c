@@ -9,9 +9,11 @@
 //#include <netinet/in.h> //double import from <arpa/inet.h>, not needed
 #include <netdb.h>
 
-#define STRING_USAGE "Usage: %s <IP address> [-s service]\n"
-#define MAX_IPV4_LENGTH 15
+#define MAX_IPV4_LENGTH    15
 #define MAX_SERVICE_LENGTH 12
+#define MAX_BUFFER_SIZE    512
+
+#define STRING_USAGE "Usage: %s <IP address> [-s service]\n"
 #define STRING_QOTD_MSG "Enviame el mensaje del dia"
 #define CHAR_SIZE sizeof(STRING_QOTD_MSG[0])
 // Sizeof is resolved at compile time, effectively serving as strlen-like macro
@@ -190,42 +192,11 @@ qotd_get_quote
     }
 
     /*
-    if (shutdown(sockfd, SHUT_WR) == -1) {
-        perror("shutdown");
-        goto exit_error_socket;
-    }
-    */
-    
-    /* 
-     * Peek the message to find out the actual size of it.
-     * From the manual pages, MSG_PEEK reads the datagram or packet without removing it
-     * from the message queue. MSG_TRUNC flag makes recvfrom return the real size
-     * of that datagram or packet.
-     * This is useful because recvfrom() and recv() doesn't do reallocs, so you 
-     * would need to allocate initially a buffer of 64KB to account for the maximum 
-     * size of a TCP/UDP packet. This is quite wasteful in terms of memory usage.
-     */
-    msg_size = recv(sockfd, NULL, 0, MSG_TRUNC);
-    if (msg_size == -1) {
-        perror("recvfrom peek");
-        goto exit_error_socket;
-    }
-    
-    printf("%d\n", msg_size);
-
-    // Allocate memory for the message buffer using the previously obtained size
-    *received_msg = (char *)malloc(msg_size);
-    if (*received_msg == NULL) {
-        perror("malloc");
-        goto exit_error_socket;
-    }
-
-    /*
      * Actually fetch the packet from the queue onto the allocated buffer.
      * We don't need to use the address of the sender, so we pass NULL as those
      * arguments.
      */
-    msg_size = recv(sockfd, *received_msg, msg_size, 0);
+    msg_size = recv(sockfd, *received_msg, MAX_BUFFER_SIZE, 0);
     if (msg_size == -1) {
         perror("recv");
         goto exit_error_socket;
@@ -241,8 +212,6 @@ qotd_get_quote
 
 // clean exit
 exit_error_socket:
-    if (received_msg)
-        free(received_msg);
     // No more receptions or transmissions
     if (shutdown(sockfd, SHUT_RDWR) == -1)
         perror("shutdown");
@@ -256,7 +225,7 @@ main (int argc, char *argv[])
     struct sockaddr_in myaddr = {0};
     struct sockaddr_in addr   = {0};
     struct arguments   args   = {0};
-    char *received_msg = NULL;
+    char received_msg[MAX_BUFFER_SIZE] = {0};
     int sockfd;
     int err;
 
